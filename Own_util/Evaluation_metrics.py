@@ -75,7 +75,7 @@ class Evaluation_metrics(object):
             #     print(thres)
             pred_t = self.pred > thres
             pred_t.astype(int)
-            cm = metrics.confusion_matrix(y, pred_t)
+            cm = metrics.confusion_matrix(self.y, pred_t)
             mali.append(cm[1, 1] / sum(cm[1, :]))
             beni.append(cm[0, 0] / sum(cm[0, :]))
             cohen.append(metrics.cohen_kappa_score(self.y, pred_t))
@@ -162,8 +162,8 @@ class Evaluation_metrics(object):
         if self.show_fig:
             plt.show()
 
-    def classification_report(self,y,pred,target_names):
-        df = metrics.classification_report(y,pred,target_names=target_names)
+    def classification_report(self,target_names):
+        df = metrics.classification_report(self.y,self.pred,target_names=target_names)
         print(df)
         return df
 

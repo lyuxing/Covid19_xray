@@ -31,7 +31,7 @@ if __name__ == '__main__':
     time_string = strftime("%a%d%b%Y-%H%M%S", gmtime())
     # result_path = r'E:\Data\HeronTech\SDFY\ori_marigin_crop\model_train'
     result_path = r'E:\Xing\Covid_19_xray\train_log'
-    descrip = 'Apr25_timm_vit_swin_224_augmented'
+    descrip = 'Apr27_timm_vit_224_imgaug_binary_bce'
     debug = True
     model_save_path = os.path.join(result_path, descrip, time_string, 'save')
     tb_save_path = os.path.join(result_path, descrip,time_string, 'tb')
@@ -60,8 +60,8 @@ if __name__ == '__main__':
     # train_bs = 8
     # valid_bs = 8
 
-    # model = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=2)
-    model = timm.create_model('swin_base_patch4_window7_224', pretrained=True, num_classes=1)
+    model = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=1)
+    # model = timm.create_model('swin_base_patch4_window7_224', pretrained=True, num_classes=1)
     # model = timm.create_model('vit_base_resnet50d_224', pretrained=True, num_classes=2)
     img_size = 224
     train_bs = 32
@@ -78,18 +78,19 @@ if __name__ == '__main__':
     else:
         model = model.cuda()
 
-    # criterion = nn.BCELoss().cuda()
+    criterion = nn.BCELoss().cuda()
     # criterion = nn.NLLLoss()
     # criterion = nn.CrossEntropyLoss()
-    criterion = FocalLoss().cuda()
+    # criterion = FocalLoss().cuda()
 
     lr = 1e-3
 
-    optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-5)
+    # optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-5)
     # optimizer = optim.Adam(model.parameters(), lr=1e-5)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=10, threshold=0.01, factor=0.3)
-    # scheduler = CosineAnnealingWarmupRestarts(optimizer, first_cycle_steps=10, cycle_mult=2.0, max_lr=lr, min_lr=1e-8, warmup_steps=2, gamma=0.5)
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=10, threshold=0.01, factor=0.3)
+    scheduler = CosineAnnealingWarmupRestarts(optimizer, first_cycle_steps=6, cycle_mult=2.0, max_lr=lr, min_lr=1e-8, warmup_steps=2, gamma=0.5)
 
 
 
@@ -224,8 +225,8 @@ if __name__ == '__main__':
 
                     add_image_3d(inputs_val, predict, targets_val, writer, column = np.sqrt(valid_bs), subset='val', epoch=epoch, name= str(i)+'_image')
 
-        scheduler.step(losses_val.avg)
-        # scheduler.step()
+        # scheduler.step(losses_val.avg)
+        scheduler.step()
 
         print('epoch: ', epoch+1, 'train_loss: ', losses.avg, 'train_acc: ', accuracies.avg,
               'val_loss: ', losses_val.avg, 'val_acc: ', accuracies_val.avg)

@@ -30,7 +30,7 @@ class dataconfig(object):
         # self.dir = r'E:\Xing\mass0508\Crops_M'   % original
         # self.csv = 'Gl_summery_csv_valid_dn.csv' % original
         self.dir = r'E:\Xing\Covid_19_xray\code'
-        self.csv = 'df_main.csv'
+        self.csv = 'df_test_gt_new.csv'
         self.subset = subset
         self.csv_file = os.path.join(self.dir,self.csv)
 
@@ -159,7 +159,7 @@ class DataGenerator(Dataset):
         if self.debug:
             pass
 
-        return image,label,img_path
+        return image,label,img_name
 
     @staticmethod
     def parse_csv(csv_file, subset):

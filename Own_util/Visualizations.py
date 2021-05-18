@@ -115,6 +115,7 @@ class Visualizations(object):
 
         #     pred = net(input_image.unsqueeze(0))
         #     print(pred)
+        print(input_image.shape)
         out = net(input_image.unsqueeze(0))
         label = label.unsqueeze(0)
 
@@ -139,7 +140,7 @@ class Visualizations(object):
 
         cam = cv2.resize(cam, (224, 224))
         cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))
-        cam = 1.0 - cam
+        # cam = 1.0 - cam
         cam = np.uint8(cam * 255)
 
         return cam
